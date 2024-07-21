@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 
+app.use(express.json());
+
 let persons = [
   {
     id: '1',
@@ -29,9 +31,51 @@ app.get('/api/persons', (request, response) => {
 });
 
 app.get('/info', (request, response) => {
-  response.send(`Phonebook has info for ${persons.length} persons`);
-  console.log('hello');
+  const requestDate = new Date();
+  response.send(`
+    <p>Phonebook has info for ${persons.length} persons</p>
+    <p>${requestDate}<p/>
+    `);
 });
+
+app.get('/api/persons/:id', (request, response) => {
+  const id = request.params.id;
+  const person = persons.find((person) => person.id === id);
+  if (person) {
+    response.json(person);
+  } else {
+    response.status(404).end();
+  }
+});
+
+app.delete('/api/persons/:id', (request, response) => {
+  const id = request.params.id;
+  persons = persons.filter((per) => per.id !== id);
+
+  response.status(204).end();
+});
+
+app.post('/api/persons/', (request, response) => {
+  const person = request.body;
+  person.id = Math.floor(Math.random() * 100000) + 1;
+  console.log(person);
+  if (!person.name || !person.number) {
+    return response.status(400).json({
+      error: 'name or number missing',
+    });
+  }
+  if (persons.map((per) => per.name.toLowerCase()).includes(person.name)) {
+    return response.status(400).json({
+      error: 'name must be unique',
+    });
+  }
+  persons = persons.concat(person);
+  response.json(persons);
+});
+
+//   persons = person.concat(person);
+//   response.json(person);
+// });
 
 const PORT = 3001;
 app.listen(PORT, () => {
