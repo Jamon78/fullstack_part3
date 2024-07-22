@@ -1,13 +1,8 @@
-DELETE http://localhost:3001/api/persons/2
+DELETE http://localhost:3001/api/persons/13044
 
 ###
-GET http://localhost:3001/api/persons/2
+GET http://localhost:3001/api/persons/
 
 ###
 POST http://localhost:3001/api/persons
 Content-Type: application/json
-
-{
-    "name": "testi Testinen",
-    "number": "12345"
-}
